@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function Dashboard() {
@@ -11,6 +11,7 @@ export default function Dashboard() {
     const [education, setEducation] = useState("");
     const [expertise, setExpertise] = useState("");
     const [category, setCategory] = useState("");
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios.get("http://localhost:8000/students")
@@ -24,7 +25,6 @@ export default function Dashboard() {
     }, []);
 
     useEffect(() => {
-        // Filter students based on criteria
         const filtered = students.filter(student => {
             const birthYear = student.year_of_birth;
 
@@ -42,9 +42,18 @@ export default function Dashboard() {
         setFilteredStudents(filtered);
     }, [minYearOfBirth, maxYearOfBirth, education, expertise, category, students]);
 
+    const handleLogout = () => {
+        sessionStorage.clear();
+        navigate("/");
+    };
+
     return (
         <div className="h-screen w-screen bg-gray-300 text-black flex flex-col justify-center items-center">
-            <div className="absolute top-5 right-5 flex space-x-4">
+            <img
+                src="/logo.png"
+                alt="Logo" 
+                className="absolute top-5 left-5 h-32 mb-6"/>
+            <div className="absolute top-16 right-5 flex space-x-4">
                 {role === "superAdmin" && (
                     <Link to="/registerAdmin" className="bg-white text-black rounded-md p-3 hover:bg-gray-100 transition duration-300 transform hover:scale-105">
                         Register Admin
@@ -53,9 +62,15 @@ export default function Dashboard() {
                 <Link to="/registerStudent" className="bg-white text-black rounded-md p-3 hover:bg-gray-100 transition duration-300 transform hover:scale-105">
                     Register Students
                 </Link>
+                <button
+                    onClick={handleLogout}
+                    className="bg-red-400 text-white rounded-md p-3 hover:bg-red-700 transition duration-300 transform hover:scale-105"
+                >
+                    Logout
+                </button>
             </div>
 
-            <div className="w-full bg-white p-6 rounded-lg shadow-md">
+            <div className="w-full mt-32 bg-white p-6 rounded-lg shadow-md">
                 <h2 className="text-xl font-bold mb-4">Filters</h2>
                 <div className="flex flex-wrap gap-4 mb-6">
                     <div>

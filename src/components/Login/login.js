@@ -48,6 +48,10 @@ export default function Login() {
 
     return (
         <div className="h-screen w-screen bg-gray-300 flex flex-col justify-center items-center">
+            <img
+                src="/logo.png"
+                alt="Logo" 
+                className="h-32 mb-10"/>
             <div className="bg-white p-8 rounded-lg shadow-md w-96">
                 <form onSubmit={submit}>
                     <div className="w-80 mt-10">
