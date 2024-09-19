@@ -51,7 +51,8 @@ export default function Login() {
             <img
                 src="/logo.png"
                 alt="Logo" 
-                className="h-32 mb-10"/>
+                className="h-32 mb-6"/>
+                <div className="m-2 font-bold text-3xl">LOGIN</div>
             <div className="bg-white p-8 rounded-lg shadow-md w-96">
                 <form onSubmit={submit}>
                     <div className="w-80 mt-10">

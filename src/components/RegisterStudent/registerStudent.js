@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -16,7 +16,19 @@ export default function RegisterStudent() {
     const [teaching, setTeaching] = useState("");
     const [khidmat, setKhidmat] = useState("");
     const [committee, setCommittee] = useState("");
+    const [role, setRole] = useState("");
     const navigate = useNavigate();
+
+    useEffect(() => {
+
+        const role = sessionStorage.getItem("role");
+        setRole(role);
+        if (!role) {
+            alert("You must login first.");
+            navigate("/");
+            return;
+        }
+    }, []);
 
     async function submit(e) {
         e.preventDefault();
@@ -56,7 +68,7 @@ export default function RegisterStudent() {
     }
 
     return (
-        <div className="h-full w-screen bg-gray-300 flex flex-col justify-center items-center">
+        <div className="h-full w-full bg-gray-300 flex flex-col justify-center items-center">
             <img
                 src="/logo.png"
                 alt="Logo" 

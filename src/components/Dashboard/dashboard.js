@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function Dashboard() {
-    const role = sessionStorage.getItem("role");
     const [students, setStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
     const [minYearOfBirth, setMinYearOfBirth] = useState("");
@@ -11,9 +10,19 @@ export default function Dashboard() {
     const [education, setEducation] = useState("");
     const [expertise, setExpertise] = useState("");
     const [category, setCategory] = useState("");
+    const [role, setRole] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
+
+        const role = sessionStorage.getItem("role");
+        setRole(role);
+        if (!role) {
+            alert("You must login first.");
+            navigate("/");
+            return;
+        }
+
         axios.get("http://localhost:8000/students")
             .then(response => {
                 setStudents(response.data.data);
@@ -51,8 +60,8 @@ export default function Dashboard() {
         <div className="h-screen w-screen bg-gray-300 text-black flex flex-col justify-center items-center">
             <img
                 src="/logo.png"
-                alt="Logo" 
-                className="absolute top-5 left-5 h-32 mb-6"/>
+                alt="Logo"
+                className="absolute top-5 left-5 h-32 mb-6" />
             <div className="absolute top-16 right-5 flex space-x-4">
                 {role === "superAdmin" && (
                     <Link to="/registerAdmin" className="bg-white text-black rounded-md p-3 hover:bg-gray-100 transition duration-300 transform hover:scale-105">

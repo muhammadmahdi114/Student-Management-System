@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -7,7 +7,19 @@ export default function RegisterAdmin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordType, setPasswordType] = useState("password");
+    const [role, setRole] = useState("");
     const navigate = useNavigate();
+
+    useEffect(() => {
+
+        const role = sessionStorage.getItem("role");
+        setRole(role);
+        if (role !== "superAdmin") {
+            alert("You must be a Super Admin.")
+            navigate("/");
+            return;
+        }
+    }, []);
 
     const handleTogglePass = () => {
         setPasswordType(passwordType === "password" ? "text" : "password");
