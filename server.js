@@ -94,36 +94,89 @@ app.post("/register-admin", async (req, res) => {
 });
 
 app.post("/register-student", async (req, res) => {
-    const { name, year_of_birth, education, contact, job, martial_status, expertise, category, email, address, teaching, khidmat, committee } = req.body;
+    const {
+        full_name,
+        roll_no,
+        father_name,
+        father_profession,
+        father_contact,
+        year_of_birth,
+        marital_status,
+        blood_group,
+        hometown,
+        languages,
+        blood_relative_in_classes,
+        highest_education_level,
+        highest_education_institute,
+        class_name,
+        teacher_name,
+        date_of_joining_current_class,
+        date_of_joining_association,
+        contact_no,
+        email,
+        resident_address,
+        city,
+        country,
+        profession,
+        current_job_role,
+        office_name,
+        office_address,
+        committee_member,
+        committee_name,
+        date_of_joining_committee,
+        referred_by
+    } = req.body;
 
     try {
+        // Check if a student with the same email already exists
         const existingStudent = await StudentSchema.findOne({ email });
 
         if (existingStudent) {
             return res.status(409).json({ success: false, message: "Student already exists" });
-        } else {
-            const student = await StudentSchema.create({
-                name,
-                year_of_birth,
-                education,
-                contact,
-                job,
-                martial_status,
-                expertise,
-                category,
-                email,
-                address,
-                teaching,
-                khidmat,
-                committee
-            });
-            return res.status(201).json({ success: true, student });
         }
+
+        // Create a new student entry
+        const student = await StudentSchema.create({
+            full_name,
+            roll_no,
+            father_name,
+            father_profession,
+            father_contact,
+            year_of_birth,
+            marital_status,
+            blood_group,
+            hometown,
+            languages, // Array
+            blood_relative_in_classes, // Object {name, relationship, class}
+            highest_education_level,
+            highest_education_institute,
+            class_name,
+            teacher_name,
+            date_of_joining_current_class,
+            date_of_joining_association,
+            contact_no,
+            email,
+            resident_address,
+            city,
+            country,
+            profession,
+            current_job_role,
+            office_name,
+            office_address,
+            committee_member, // Boolean
+            committee_name,
+            date_of_joining_committee,
+            referred_by
+        });
+
+        // Respond with success message
+        return res.status(201).json({ success: true, student });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 });
+
 
 app.get("/students", async (req, res) => {
     try {

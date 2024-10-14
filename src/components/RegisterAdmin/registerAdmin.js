@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 export default function RegisterAdmin() {
@@ -9,17 +9,20 @@ export default function RegisterAdmin() {
     const [passwordType, setPasswordType] = useState("password");
     const [role, setRole] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
 
-        const role = sessionStorage.getItem("role");
+        const { role } = location.state || {};
         setRole(role);
         if (role !== "superAdmin") {
             alert("You must be a Super Admin.")
             navigate("/");
             return;
         }
-    }, []);
+    }, [location.state, navigate]);
+
+    console.log(role);
 
     const handleTogglePass = () => {
         setPasswordType(passwordType === "password" ? "text" : "password");
@@ -54,30 +57,60 @@ export default function RegisterAdmin() {
     }
 
     return (
-        <div className="h-screen w-screen bg-gray-300 flex flex-col justify-center items-center">
+        <div className="h-screen w-screen bg-gradient-to-b from-white to-gray-600 flex flex-col justify-center items-center">
+            <img
+                src="/arrow.png"
+                alt="Back"
+                className="h-10 absolute top-5 left-5 mb-6 transition-transform duration-300 hover:scale-110"
+                onClick={() => { navigate("/dashboard", { state: { role } }) }}
+            />
             <img
                 src="/logo.png"
-                alt="Logo" 
-                className="h-32 mb-10"/>
-            <div className="bg-white p-8 rounded-lg shadow-md w-96">
+                alt="Logo"
+                className="h-32 mb-6 transition-transform duration-300 hover:scale-110"
+                />
+            <div className="m-2 font-bold text-4xl text-gray-800 drop-shadow-lg">REGISTER ADMIN</div>
+            <div className="bg-white mt-5 p-10 rounded-xl shadow-lg w-96 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl">
                 <form onSubmit={submit}>
                     <div className="w-80 mt-10">
-                        <input type="text" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} className="h-8 border-b-2 border-gray-200 pl-5 w-full" />
+                        <input
+                            type="text"
+                            placeholder="Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            className="h-12 border-2 border-gray-300 pl-5 w-full rounded-lg bg-gray-100 text-gray-700 placeholder-gray-400 transition-colors duration-300 focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200"
+                        />
                     </div>
-                    <div className="w-80 mt-10">
-                        <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-8 border-b-2 border-gray-200 pl-5 w-full" />
+                    <div className="w-80 mt-8">
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            className="h-12 border-2 border-gray-300 pl-5 w-full rounded-lg bg-gray-100 text-gray-700 placeholder-gray-400 transition-colors duration-300 focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200"
+                        />
                     </div>
-                    <div className="w-80 mt-10">
-                        <input type={passwordType} placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-8 border-b-2 border-gray-200 pl-5 w-full" />
+                    <div className="w-80 mt-8">
+                        <input
+                            type={passwordType}
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="h-12 border-2 border-gray-300 pl-5 w-full rounded-lg bg-gray-100 text-gray-700 placeholder-gray-400 transition-colors duration-300 focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200"
+                        />
                     </div>
-                    <div className="mt-10">
-                        <input type="checkbox" onChange={handleTogglePass} />
-                        <label className="ml-2">Show password</label>
+                    <div className="mt-8 flex items-center">
+                        <input
+                            type="checkbox"
+                            onChange={handleTogglePass}
+                            className="transform transition-all duration-300 checked:scale-110"
+                        />
+                        <label className="ml-2 text-gray-800 mb-1">Show Password</label>
                     </div>
                     <div className="w-80 mt-10">
                         <button
                             type="submit"
-                            className="p-2 rounded text-center border-white mt-4 bg-blue-500 text-white h-12 w-full hover:bg-blue-700 hover:shadow-lg transition duration-300 ease-in-out transform hover:-translate-y-1 focus:outline-none focus:shadow-outline"
+                            className="p-3 rounded-xl text-center bg-blue-500 text-white h-12 w-full hover:bg-blue-600 hover:shadow-lg transition-transform transform hover:-translate-y-1 hover:scale-105 duration-300 focus:outline-none focus:shadow-outline"
                         >
                             Submit
                         </button>
@@ -85,5 +118,6 @@ export default function RegisterAdmin() {
                 </form>
             </div>
         </div>
+
     );
 }

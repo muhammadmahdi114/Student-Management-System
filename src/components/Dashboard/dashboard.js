@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
 export default function Dashboard() {
@@ -8,19 +8,25 @@ export default function Dashboard() {
     const [minYearOfBirth, setMinYearOfBirth] = useState("");
     const [maxYearOfBirth, setMaxYearOfBirth] = useState("");
     const [education, setEducation] = useState("");
-    const [expertise, setExpertise] = useState("");
-    const [category, setCategory] = useState("");
+    const [currentJob, setCurrentJob] = useState("");
+    const [profession, setProfession] = useState("");
     const [role, setRole] = useState("");
+    const [name, setName] = useState("");
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
-
-        const role = sessionStorage.getItem("role");
-        setRole(role);
-        if (!role) {
-            alert("You must login first.");
-            navigate("/");
-            return;
+        const { nameFromResponse, roleFromResponse } = location.state || {};
+        setRole(roleFromResponse);
+        setName(nameFromResponse);
+        if (!roleFromResponse) {
+            const { role } = location.state || {};
+            setRole(role);
+            if (!role) {
+                alert("You must login first.");
+                navigate("/");
+                return;
+            }
         }
 
         axios.get("http://localhost:8000/students")
@@ -31,7 +37,7 @@ export default function Dashboard() {
             .catch(error => {
                 console.error("Error fetching students data:", error);
             });
-    }, []);
+    }, [navigate, location.state]);
 
     useEffect(() => {
         const filtered = students.filter(student => {
@@ -41,15 +47,16 @@ export default function Dashboard() {
                 (minYearOfBirth === "" || birthYear >= minYearOfBirth) &&
                 (maxYearOfBirth === "" || birthYear <= maxYearOfBirth);
 
-            const isEducationMatch = student.education.toLowerCase().includes(education.toLowerCase());
-            const isExpertiseMatch = student.expertise.toLowerCase().includes(expertise.toLowerCase());
-            const isCategoryMatch = student.category.toLowerCase().includes(category.toLowerCase());
+            const isEducationMatch = student.highest_education_level.toLowerCase().includes(education.toLowerCase());
+            const isJobRoleMatch = student.current_job_role.toLowerCase().includes(currentJob.toLowerCase());
+            const isProfessionMatch = student.profession.toLowerCase().includes(profession.toLowerCase());
 
-            return isYearInRange && isEducationMatch && isExpertiseMatch && isCategoryMatch;
+            return isYearInRange && isEducationMatch && isJobRoleMatch && isProfessionMatch;
         });
 
         setFilteredStudents(filtered);
-    }, [minYearOfBirth, maxYearOfBirth, education, expertise, category, students]);
+    }, [minYearOfBirth, maxYearOfBirth, education, currentJob, profession, students]);
+
 
     const handleLogout = () => {
         sessionStorage.clear();
@@ -57,74 +64,77 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="h-screen w-screen bg-gray-300 text-black flex flex-col justify-center items-center">
+        <div className="h-screen w-screen bg-gradient-to-b from-white to-gray-500 text-black flex flex-col justify-center items-center">
             <img
                 src="/logo.png"
                 alt="Logo"
-                className="absolute top-5 left-5 h-32 mb-6" />
+                className="absolute top-5 left-5 h-32 mb-6 transition-transform duration-300 hover:scale-110"
+            />
+            <h2 className="text-3xl font-bold text-gray-700">Welcome {name}</h2>
+
             <div className="absolute top-16 right-5 flex space-x-4">
                 {role === "superAdmin" && (
-                    <Link to="/registerAdmin" className="bg-white text-black rounded-md p-3 hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+                    <Link to="/registerAdmin" state={{ role }} className="bg-white text-gray-800 rounded-md p-3 shadow-md hover:bg-gray-100 transition-transform duration-300 transform hover:scale-105">
                         Register Admin
                     </Link>
                 )}
-                <Link to="/registerStudent" className="bg-white text-black rounded-md p-3 hover:bg-gray-100 transition duration-300 transform hover:scale-105">
+                <Link to="/registerStudent" state={{ role }} className="bg-white text-gray-800 rounded-md p-3 shadow-md hover:bg-gray-100 transition-transform duration-300 transform hover:scale-105">
                     Register Students
                 </Link>
                 <button
                     onClick={handleLogout}
-                    className="bg-red-400 text-white rounded-md p-3 hover:bg-red-700 transition duration-300 transform hover:scale-105"
+                    className="bg-red-500 text-white rounded-md p-3 shadow-md hover:bg-red-600 transition-transform duration-300 transform hover:scale-105"
                 >
                     Logout
                 </button>
             </div>
 
-            <div className="w-full mt-32 bg-white p-6 rounded-lg shadow-md">
-                <h2 className="text-xl font-bold mb-4">Filters</h2>
-                <div className="flex flex-wrap gap-4 mb-6">
+            <div className="w-full mt-32 bg-white p-8 rounded-lg shadow-lg">
+                <h2 className="text-2xl font-bold text-gray-800 mb-6">Filters</h2>
+                <div className="flex items-center flex-wrap gap-4 mb-6">
                     <div>
-                        <label className="block mb-1">Birth Year From:</label>
+                        <label className="block mb-1 text-gray-600">Birth Year From:</label>
                         <input
                             type="number"
                             value={minYearOfBirth}
                             onChange={(e) => setMinYearOfBirth(e.target.value)}
-                            className="border p-2 rounded"
+                            className="border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                         />
                     </div>
                     <div>
-                        <label className="block mb-1">Birth Year To:</label>
+                        <label className="block mb-1 text-gray-600">Birth Year To:</label>
                         <input
                             type="number"
                             value={maxYearOfBirth}
                             onChange={(e) => setMaxYearOfBirth(e.target.value)}
-                            className="border p-2 rounded"
+                            className="border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                         />
                     </div>
                     <div>
-                        <label className="block mb-1">Education:</label>
+                        <label className="block mb-1 text-gray-600">Education:</label>
                         <input
                             type="text"
                             value={education}
                             onChange={(e) => setEducation(e.target.value)}
-                            className="border p-2 rounded"
+                            className="border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                         />
                     </div>
                     <div>
-                        <label className="block mb-1">Expertise:</label>
+                        <label className="block mb-1 text-gray-600">Profession:</label>
                         <input
                             type="text"
-                            value={expertise}
-                            onChange={(e) => setExpertise(e.target.value)}
-                            className="border p-2 rounded"
+                            value={profession}
+                            onChange={(e) => setProfession(e.target.value)}
+                            className="border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                         />
                     </div>
                     <div>
-                        <label className="block mb-1">Category:</label>
+                        <label className="block mb-1 text-gray-600">Current Job:</label>
                         <input
                             type="text"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            className="border p-2 rounded"
+                            value={currentJob}
+                            onChange={(e) => setCurrentJob(e.target.value)}
+                            className="border p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-200"
                         />
                     </div>
                 </div>
@@ -133,14 +143,14 @@ export default function Dashboard() {
                     <table className="min-w-full bg-white border border-gray-300">
                         <thead>
                             <tr className="bg-gray-100 border-b">
+                                <th className="p-2 border-r">Roll No.</th>
                                 <th className="p-2 border-r">Name</th>
-                                <th className="p-2 border-r">Year of Birth</th>
-                                <th className="p-2 border-r">Education</th>
+                                <th className="p-2 border-r">Father's Name</th>
+                                <th className="p-2 border-r">Highest Education</th>
                                 <th className="p-2 border-r">Contact</th>
-                                <th className="p-2 border-r">Job</th>
-                                <th className="p-2 border-r">Martial Status</th>
-                                <th className="p-2 border-r">Expertise</th>
-                                <th className="p-2 border-r">Category</th>
+                                <th className="p-2 border-r">Current Job</th>
+                                <th className="p-2 border-r">Marital Status</th>
+                                <th className="p-2 border-r">Profession</th>
                                 <th className="p-2 border-r">Email</th>
                                 <th className="p-2 border-r">Address</th>
                                 <th className="p-2 border-r">Teaching</th>
@@ -150,18 +160,18 @@ export default function Dashboard() {
                         <tbody>
                             {filteredStudents.map(student => (
                                 <tr key={student._id} className="border-b">
-                                    <td className="p-2 border-r">{student.name}</td>
-                                    <td className="p-2 border-r">{student.year_of_birth}</td>
-                                    <td className="p-2 border-r">{student.education}</td>
-                                    <td className="p-2 border-r">{student.contact}</td>
-                                    <td className="p-2 border-r">{student.job}</td>
-                                    <td className="p-2 border-r">{student.martial_status}</td>
-                                    <td className="p-2 border-r">{student.expertise}</td>
-                                    <td className="p-2 border-r">{student.category}</td>
+                                    <td className="p-2 border-r">{student.roll_no || "N/A"}</td>
+                                    <td className="p-2 border-r">{student.full_name}</td>
+                                    <td className="p-2 border-r">{student.father_name}</td>
+                                    <td className="p-2 border-r">{student.highest_education_level}</td>
+                                    <td className="p-2 border-r">{student.contact_no}</td>
+                                    <td className="p-2 border-r">{student.current_job_role || "N/A"}</td>
+                                    <td className="p-2 border-r">{student.marital_status || "N/A"}</td>
+                                    <td className="p-2 border-r">{student.profession}</td>
                                     <td className="p-2 border-r">{student.email}</td>
-                                    <td className="p-2 border-r">{student.address}</td>
+                                    <td className="p-2 border-r">{student.resident_address}</td>
                                     <td className="p-2 border-r">{student.teaching ? "Yes" : "No"}</td>
-                                    <td className="p-2">{student.committee}</td>
+                                    <td className="p-2">{student.committee_member ? "Yes" : "No"}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -169,5 +179,6 @@ export default function Dashboard() {
                 </div>
             </div>
         </div>
-    )
+
+    );
 }
