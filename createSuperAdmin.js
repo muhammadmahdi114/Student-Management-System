@@ -4,7 +4,7 @@ async function createSuperAdmin() {
     const name = "AMN-MMC";
     const password = "mmc255";
     const email = "mmc@amn.com";
-    const role = "SuperAdmin";
+    const adminRole = "superAdmin";
 
     try {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -17,7 +17,7 @@ async function createSuperAdmin() {
             name,
             email,
             password,
-            role
+            adminRole
         });
 
         if (response.data.success) {

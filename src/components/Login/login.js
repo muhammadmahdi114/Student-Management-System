@@ -32,9 +32,20 @@ export default function Login() {
             });
 
             if (response.data.success) {
-                const nameFromResponse = response.data.username;
                 const roleFromResponse = response.data.role;
-                navigate("/dashboard", { state: { nameFromResponse, roleFromResponse } });
+                console.log(roleFromResponse);
+                if(roleFromResponse === "admin-ic"){
+                    navigate("/ic-dashboard", { state: { roleFromResponse } });
+                }
+                else if(roleFromResponse === "admin-pc"){
+                    navigate("/pc-dashboard", { state: { roleFromResponse } });
+                }
+                else if(roleFromResponse === "admin-sc"){
+                    navigate("/sc-dashboard", { state: { roleFromResponse } });
+                }
+                else if(roleFromResponse === "superAdmin"){
+                    navigate("/mmc-dashboard", { state: { roleFromResponse } });
+                }
             } else {
                 alert(response.data.message);
             }

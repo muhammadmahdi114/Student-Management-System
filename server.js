@@ -32,7 +32,7 @@ app.post("/login", async (req, res) => {
             return res.status(200).json({
                 success: true,
                 username: user.name,
-                role: user.role
+                role: user.adminRole
             });
         } else {
             return res.status(401).json({ success: false, message: "Invalid email or password" });
@@ -44,8 +44,7 @@ app.post("/login", async (req, res) => {
 });
 
 app.post("/register-superAdmin", async (req, res) => {
-    const { name, email, password } = req.body;
-    const role = 'superAdmin';
+    const { name, email, password, adminRole } = req.body;
 
     try {
         const check = await AdminSchema.findOne({ email: email });
@@ -58,7 +57,7 @@ app.post("/register-superAdmin", async (req, res) => {
                 name,
                 email,
                 password: EncPassword,
-                role,
+                adminRole,
             });
             return res.status(201).json({ success: true, user });
         }
@@ -69,8 +68,7 @@ app.post("/register-superAdmin", async (req, res) => {
 });
 
 app.post("/register-admin", async (req, res) => {
-    const { name, email, password } = req.body;
-    const role = 'admin';
+    const { name, email, password, adminRole } = req.body;
 
     try {
         const check = await AdminSchema.findOne({ email });
@@ -83,7 +81,7 @@ app.post("/register-admin", async (req, res) => {
                 name,
                 email,
                 password: EncPassword,
-                role,
+                adminRole,
             });
             return res.status(201).json({ success: true, user });
         }

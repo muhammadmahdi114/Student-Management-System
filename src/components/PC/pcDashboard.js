@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 
-export default function Dashboard() {
+export default function PCDashboard() {
     const [students, setStudents] = useState([]);
     const [filteredStudents, setFilteredStudents] = useState([]);
     const [minYearOfBirth, setMinYearOfBirth] = useState("");
@@ -11,14 +11,12 @@ export default function Dashboard() {
     const [currentJob, setCurrentJob] = useState("");
     const [profession, setProfession] = useState("");
     const [role, setRole] = useState("");
-    const [name, setName] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
 
     useEffect(() => {
-        const { nameFromResponse, roleFromResponse } = location.state || {};
+        const { roleFromResponse } = location.state || {};
         setRole(roleFromResponse);
-        setName(nameFromResponse);
         if (!roleFromResponse) {
             const { role } = location.state || {};
             setRole(role);
@@ -70,14 +68,9 @@ export default function Dashboard() {
                 alt="Logo"
                 className="absolute top-5 left-5 h-32 mb-6 transition-transform duration-300 hover:scale-110"
             />
-            <h2 className="text-3xl font-bold text-gray-700">Welcome {name}</h2>
+            <h2 className="text-3xl font-bold text-gray-700">Welcome to Primary Dashboard</h2>
 
             <div className="absolute top-16 right-5 flex space-x-4">
-                {role === "superAdmin" && (
-                    <Link to="/registerAdmin" state={{ role }} className="bg-white text-gray-800 rounded-md p-3 shadow-md hover:bg-gray-100 transition-transform duration-300 transform hover:scale-105">
-                        Register Admin
-                    </Link>
-                )}
                 <Link to="/registerStudent" state={{ role }} className="bg-white text-gray-800 rounded-md p-3 shadow-md hover:bg-gray-100 transition-transform duration-300 transform hover:scale-105">
                     Register Students
                 </Link>

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const AdminSchema = new mongoose.Schema({
+const MemberSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true
@@ -10,7 +10,7 @@ const AdminSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  password: {
+  committee: {
     type: String,
     required: true,
   },
@@ -20,4 +20,4 @@ const AdminSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.model('Admin', AdminSchema);
+module.exports = mongoose.model('Member', MemberSchema);

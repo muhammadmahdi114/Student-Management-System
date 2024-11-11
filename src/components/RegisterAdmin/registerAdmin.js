@@ -7,6 +7,7 @@ export default function RegisterAdmin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [passwordType, setPasswordType] = useState("password");
+    const [adminRole, setAdminRole] = useState("");
     const [role, setRole] = useState("");
     const navigate = useNavigate();
     const location = useLocation();
@@ -22,8 +23,6 @@ export default function RegisterAdmin() {
         }
     }, [location.state, navigate]);
 
-    console.log(role);
-
     const handleTogglePass = () => {
         setPasswordType(passwordType === "password" ? "text" : "password");
     };
@@ -36,7 +35,7 @@ export default function RegisterAdmin() {
             return;
         }
 
-        const payload = { name, email, password };
+        const payload = { name, email, password, adminRole };
 
         try {
             const response = await axios.post("http://localhost:8000/register-admin", payload, {
@@ -46,7 +45,7 @@ export default function RegisterAdmin() {
             });
 
             if (response.data.success) {
-                navigate("/dashboard");
+                navigate("/mmc-dashboard");
             } else {
                 alert(response.data.message);
             }
@@ -55,6 +54,7 @@ export default function RegisterAdmin() {
             console.log(error);
         }
     }
+    console.log(adminRole);
 
     return (
         <div className="h-screen w-screen bg-gradient-to-b from-white to-gray-600 flex flex-col justify-center items-center">
@@ -68,7 +68,7 @@ export default function RegisterAdmin() {
                 src="/logo.png"
                 alt="Logo"
                 className="h-32 mb-6 transition-transform duration-300 hover:scale-110"
-                />
+            />
             <div className="m-2 font-bold text-4xl text-gray-800 drop-shadow-lg">REGISTER ADMIN</div>
             <div className="bg-white mt-5 p-10 rounded-xl shadow-lg w-96 transform transition-all duration-500 hover:scale-105 hover:shadow-2xl">
                 <form onSubmit={submit}>
@@ -81,7 +81,7 @@ export default function RegisterAdmin() {
                             className="h-12 border-2 border-gray-300 pl-5 w-full rounded-lg bg-gray-100 text-gray-700 placeholder-gray-400 transition-colors duration-300 focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200"
                         />
                     </div>
-                    <div className="w-80 mt-8">
+                    <div className="w-80 mt-4">
                         <input
                             type="email"
                             placeholder="Email"
@@ -90,7 +90,19 @@ export default function RegisterAdmin() {
                             className="h-12 border-2 border-gray-300 pl-5 w-full rounded-lg bg-gray-100 text-gray-700 placeholder-gray-400 transition-colors duration-300 focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200"
                         />
                     </div>
-                    <div className="w-80 mt-8">
+                    <div className="w-80 mt-4">
+                        <select
+                            value={adminRole}
+                            onChange={(e) => setAdminRole(e.target.value)}
+                            className="h-12 border-2 border-gray-300 pl-5 w-full rounded-lg bg-gray-100 text-gray-700 transition-colors duration-300 focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200"
+                        >
+                            <option value="" disabled>Select Committee</option>
+                            <option value="admin-ic">IC Committee</option>
+                            <option value="admin-pc">PC Committee</option>
+                            <option value="admin-sc">SC Committee</option>
+                        </select>
+                    </div>
+                    <div className="w-80 mt-4">
                         <input
                             type={passwordType}
                             placeholder="Password"
@@ -99,7 +111,7 @@ export default function RegisterAdmin() {
                             className="h-12 border-2 border-gray-300 pl-5 w-full rounded-lg bg-gray-100 text-gray-700 placeholder-gray-400 transition-colors duration-300 focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200"
                         />
                     </div>
-                    <div className="mt-8 flex items-center">
+                    <div className="mt-4 flex items-center">
                         <input
                             type="checkbox"
                             onChange={handleTogglePass}
